@@ -1,0 +1,27 @@
+Json Config Parser
+==================
+
+A straightforward and unambiguous config file parser.
+
+It is based heavilly on the configparser module that comes in the standard python distribution.
+
+
+Installation
+------------
+
+
+Usage
+-----
+
+
+Examples
+--------
+
+    [section]
+    key = {"dict-key": ["list", 1.0]} # comment
+    
+
+Bugs
+----
+
+
