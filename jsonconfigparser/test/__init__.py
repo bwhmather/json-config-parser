@@ -18,9 +18,19 @@ class JSONConfigTestCase(unittest.TestCase):
 
     def test_get(self):
         cf = JSONConfigParser()
+
         cf.add_section('section')
-        cf.set('DEFAULT', 'defaults', 'set-in-defaults')
+        cf.set('section', 'section', 'set-in-section')
+        self.assertEqual(cf.get('section', 'section'), 'set-in-section')
+
+        cf.set(cf.default_section, 'defaults', 'set-in-defaults')
         self.assertEqual(cf.get('section', 'defaults'), 'set-in-defaults')
+
+        self.assertEqual(cf.get('section', 'vars',
+                                vars={'vars': 'set-in-vars'}),
+                         'set-in-vars')
+
+        self.assertEqual(cf.get('section', 'unset', 'fallback'), 'fallback')
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(JSONConfigTestCase)
