@@ -95,7 +95,7 @@ class JSONConfigParser(MutableMapping):
     _BLANK_TMPL = r"""
         ^
         (\#[^\n\r]*)?                # optional comment
-        [\n\r]+                      #eol
+        [\n\r]*([\n\r]|\Z)           # end-of-line or end-of-file
         """
 
     _HEADER_TMPL = r"""
@@ -103,7 +103,7 @@ class JSONConfigParser(MutableMapping):
         \[
         (?P<section>[\-\w]+)
         \]
-        [\n\r]+                      #eol
+        [\n\r]*([\n\r]|\Z)          # end-of-line or end-of-file
         """
 
     _KEY_TMPL = r"""
@@ -114,7 +114,7 @@ class JSONConfigParser(MutableMapping):
         """
 
     _EOL_TMPL = r"""
-        [\n\r]+                     # eol
+        [\n\r]*([\n\r]|\Z)          # end-of-line or end-of-file
         """
 
     _blank_re = re.compile(_BLANK_TMPL, re.VERBOSE | re.MULTILINE)
