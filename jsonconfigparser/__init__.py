@@ -114,7 +114,6 @@ class JSONConfigParser(MutableMapping):
         """
 
     _EOL_TMPL = r"""
-        \s*                         # optional whitespace
         [\n\r]+                     # eol
         """
 
