@@ -6,10 +6,13 @@ import itertools
 import re
 import json
 
-__all__ = ["DuplicateSectionError", "DuplicateOptionError",
-           "JSONConfigParser"]
+__all__ = ['ParseError',
+           'InvalidSectionNameError', 'InvalidOptionNameError',
+           'NoSectionError', 'NoOptionError',
+           'DuplicateSectionError', 'DuplicateOptionError',
+           'JSONConfigParser']
 
-DEFAULT_SECT = "DEFAULT"
+DEFAULT_SECT = 'DEFAULT'
 _UNSET = object()
 
 
