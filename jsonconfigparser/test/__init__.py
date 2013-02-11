@@ -16,5 +16,11 @@ class JSONConfigTestCase(unittest.TestCase):
 
         self.assertEqual(cf.get('section', 'foo'), 'bar')
 
+    def test_get(self):
+        cf = JSONConfigParser()
+        cf.add_section('section')
+        cf.set('DEFAULT', 'defaults', 'set-in-defaults')
+        self.assertEqual(cf.get('section', 'defaults'), 'set-in-defaults')
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(JSONConfigTestCase)

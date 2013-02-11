@@ -127,7 +127,7 @@ class JSONConfigParser(MutableMapping):
     _json_decoder = json.JSONDecoder()
 
     def __init__(self, defaults=None, *,
-                 dict_type=OrderedDict, default_section='DEFAULTS'):
+                 dict_type=OrderedDict, default_section=DEFAULT_SECT):
         self._dict = dict_type
         self._default_section = default_section
         self._sections = self._dict()
@@ -147,8 +147,7 @@ class JSONConfigParser(MutableMapping):
         Raise DuplicateSectionError if a section by the specified name
         already exists. Raise ValueError if name is DEFAULT.
         """
-        if (section == self.default_section) or \
-           (not self._section_re.match(section)):
+        if section == self.default_section:
             raise ValueError('Invalid section name: %r' % section)
 
         if section in self._sections:
@@ -226,7 +225,8 @@ class JSONConfigParser(MutableMapping):
             if not self.has_section(section):
                 raise NoSectionError(section)
 
-            if section is not self.default_section:
+            if section is not self.default_section and \
+               option in self._sections[section]:
                 return self._sections[section][option]
             else:
                 return self._defaults[option]
@@ -247,13 +247,13 @@ class JSONConfigParser(MutableMapping):
 
     def set(self, section, option, value=None):
         if not section or section == self.default_section:
-            sectdict = self.defaults
+            sectdict = self._defaults
         else:
             try:
                 sectdict = self._sections[section]
             except KeyError:
                 raise NoSectionError(section)
-            sectdict[option] = value
+        sectdict[option] = value
 
     def read(self, filnames, encoding=None):
         pass
