@@ -1,5 +1,4 @@
-from collections.abc import MutableMapping
-from collections import OrderedDict
+from collections import MutableMapping, OrderedDict
 
 import itertools
 
