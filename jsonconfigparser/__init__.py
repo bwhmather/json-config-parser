@@ -14,10 +14,26 @@ _UNSET = object()
 
 
 class ParseError(BaseException):
-    pass
+    def __init__(self, message, **kwargs):
+
+        info = []
+        if 'filename' in kwargs:
+            info.append('file: %s' % kwargs['filename'])
+        if 'section' in kwargs:
+            info.append('section: %s' % kwargs['section'])
+        if 'lineno' in kwargs:
+            info.append('line: %s' % kwargs['lineno'])
+
+        if len(info):
+            message.append(', '.join(info) + '\n')
+
+        if 'line' in kwargs:
+            message.append(kwargs['line'])
+
+        BaseException.__init__(self, message)
 
 
-class MissingSectionHeaderError(BaseException):
+class MissingSectionHeaderError(ParseError):
     """Raised if an option occurs before the first header
     """
     def __init__(self, filename, lineno, line):
@@ -28,73 +44,48 @@ class MissingSectionHeaderError(BaseException):
             (filename, lineno, line))
 
 
-class InvalidSectionNameError(BaseException):
+class InvalidSectionNameError(ParseError):
+    def __init__(self, section, **kwargs):
+        msg = 'Invalid section name: %s' % repr(section)
+        ParseError.__init__(self, msg, **kwargs)
+
+
+class InvalidOptionNameError(ParseError):
+    def __init__(self, option, **kwargs):
+        msg = 'Invalid option name: %s' % repr(option)
+        ParseError.__init__(self, msg, **kwargs)
+
+
+class NoSectionError(KeyError):
     pass
 
 
-class InvalidOptionNameError(BaseException):
+class NoOptionError(KeyError):
     pass
 
 
-class NoSectionError(BaseException):
-    pass
-
-
-class NoOptionError(BaseException):
-    pass
-
-
-class DuplicateSectionError(BaseException):
+class DuplicateSectionError(ParseError):
     """Raised when a section is repeated in an input source.
 
     Possible repetitions that raise this exception are: multiple creation
     using the API or when a section is found more than once in a single input
     file, string or dictionary.
     """
-
-    def __init__(self, section, source=None, lineno=None):
-        msg = [repr(section), " already exists"]
-        if source is not None:
-            message = ["While reading from ", source]
-            if lineno is not None:
-                message.append(" [line {0:2d}]".format(lineno))
-            message.append(": section ")
-            message.extend(msg)
-            msg = message
-        else:
-            msg.insert(0, "Section ")
-        BaseException.__init__(self, "".join(msg))
-        self.section = section
-        self.source = source
-        self.lineno = lineno
-        self.args = (section, source, lineno)
+    def __init__(self, section, **kwargs):
+        msg = 'Section %s already declared' % repr(section)
+        ParseError.__init__(self, msg, **kwargs)
 
 
-class DuplicateOptionError(BaseException):
-    """Raised by strict parsers when an option is repeated in an input source.
+class DuplicateOptionError(ParseError):
+    """Raised by parser when an option is repeated in an input source.
 
     Current implementation raises this exception only when an option is found
     more than once in a single file, string or dictionary.
     """
 
-    def __init__(self, section, option, source=None, lineno=None):
-        msg = [repr(option), " in section ", repr(section),
-               " already exists"]
-        if source is not None:
-            message = ["While reading from ", source]
-            if lineno is not None:
-                message.append(" [line {0:2d}]".format(lineno))
-            message.append(": option ")
-            message.extend(msg)
-            msg = message
-        else:
-            msg.insert(0, "Option ")
-        BaseException.__init__(self, "".join(msg))
-        self.section = section
-        self.option = option
-        self.source = source
-        self.lineno = lineno
-        self.args = (section, option, source, lineno)
+    def __init__(self, option, **kwargs):
+        msg = 'Duplicate definition of option: %s' % repr(option)
+        ParseError.__init__(self, msg, **kwargs)
 
 
 class JSONConfigParser(MutableMapping):
