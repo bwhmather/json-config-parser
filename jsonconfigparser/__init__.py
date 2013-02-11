@@ -294,11 +294,9 @@ class JSONConfigParser(MutableMapping):
                 mo = self._blank_re.match(string, idx)
                 if mo:
                     idx = mo.end()
-                    print("line")
                 else:
                     mo = self._key_re.match(string, idx)
                     if not mo:
-                        print(repr(string[idx:]))
                         raise ParseError(
                             "expected section, comment or newline")
 
