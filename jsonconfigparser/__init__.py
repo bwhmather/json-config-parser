@@ -136,7 +136,7 @@ class JSONConfigParser(MutableMapping):
 
     def sections(self):
         """Return a list of section names, excluding [DEFAULT]"""
-        return list(self._sections.keys())
+        return self._sections.keys()
 
     def add_section(self, section):
         """Create a new section in the configuration.
@@ -152,6 +152,9 @@ class JSONConfigParser(MutableMapping):
             raise DuplicateSectionError(section)
         self._sections[section] = self._dict()
         self._proxies[section] = SectionProxy(self, section)
+
+    def has_section(self, section):
+        return section in self._sections
 
     def remove_section(self, section):
         """Delete a section.
@@ -196,8 +199,8 @@ class JSONConfigParser(MutableMapping):
     def options(self, section):
         """Return a list of option names for the given section name."""
         try:
-            opts = list[set(self._sections[section].keys() +
-                            self._defaults.keys())]
+            opts = iter(set(self._sections[section].keys() +
+                            self._defaults.keys()))
         except KeyError:
             raise NoSectionError(section)
         return opts
@@ -228,6 +231,15 @@ class JSONConfigParser(MutableMapping):
             else:
                 return fallback
         return value
+
+    def has_option(self, section, option):
+        if not section or section == self.default_section:
+            return option in self._defaults
+        elif section in self._sections:
+            return (option in self._sections[section] or
+                    option in self._defaults)
+        else:
+            return False
 
     def set(self, section, option, value=None):
         if not section or section == self.default_section:
@@ -356,9 +368,8 @@ class SectionProxy(MutableMapping):
         else:
             return self._parser.defaults()
 
-    def get(self, option, fallback=_UNSET, *, vars=None):
-        return self._parser.get(self._name, option, vars=vars,
-                                fallback=fallback)
+    def get(self, option, *args, **kwargs):
+        return self._parser.get(self._name, option, *args, **kwargs)
 
     @property
     def parser(self):
