@@ -218,22 +218,23 @@ class JSONConfigParser(MutableMapping):
 
         The section DEFAULT is special.
         """
+
+        if vars is not None and option in vars:
+            return vars[option]
+
         try:
-            d = self._unify_values(section, vars)
-        except NoSectionError:
+            if not self.has_section(section):
+                raise NoSectionError(section)
+
+            if section is not self.default_section:
+                return self._sections[section][option]
+            else:
+                return self._defaults[option]
+        except (KeyError, NoSectionError):
             if fallback is _UNSET:
                 raise
             else:
                 return fallback
-        option = self.optionxform(option)
-        try:
-            value = d[option]
-        except KeyError:
-            if fallback is _UNSET:
-                raise NoOptionError(option, section)
-            else:
-                return fallback
-        return value
 
     def has_option(self, section, option):
         if not section or section == self.default_section:
