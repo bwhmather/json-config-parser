@@ -1,4 +1,5 @@
 import unittest
+import tempfile
 
 from jsonconfigparser import JSONConfigParser
 
@@ -18,6 +19,19 @@ class JSONConfigTestCase(unittest.TestCase):
 
         cf = JSONConfigParser()
         cf.read_string(string)
+
+        self.assertEqual(cf.get('section', 'foo'), 'bar')
+
+    def test_read_file(self):
+        string = '[section]\n' + \
+                 'foo = "bar"'
+
+        fp = tempfile.NamedTemporaryFile('w+')
+        fp.write(string)
+        fp.seek(0)
+
+        cf = JSONConfigParser()
+        cf.read_file(fp)
 
         self.assertEqual(cf.get('section', 'foo'), 'bar')
 
