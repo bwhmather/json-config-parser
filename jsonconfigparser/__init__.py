@@ -97,24 +97,20 @@ class DuplicateOptionError(BaseException):
         self.args = (section, option, source, lineno)
 
 
-class JSONConfigParser(OrderedDict):
+class JSONConfigParser(MutableMapping):
 
     _BLANK_TMPL = r"""
         ^
-        (\#.*)?                      # optional comment
-        $
-        """
-
-    _SECTION_TMPL = r"""
-        [\-\w]+
+        (\#[^\n\r]*)?                # optional comment
+        [\n\r]+                      #eol
         """
 
     _HEADER_TMPL = r"""
         #^
         \[
-        (?P<section>""" + _SECTION_TMPL + """)
+        (?P<section>[\-\w]+)
         \]
-        #$
+        [\n\r]+                      #eol
         """
 
     _KEY_TMPL = r"""
@@ -126,20 +122,18 @@ class JSONConfigParser(OrderedDict):
 
     _EOL_TMPL = r"""
         \s*                         # optional whitespace
-        (\#.*)?                      # optional comment
-        $
+        [\n\r]+                     # eol
         """
 
-    _blank_re = re.compile(_BLANK_TMPL, re.VERBOSE)
-    _section_re = re.compile('^' + _SECTION_TMPL + '$', re.VERBOSE)
-    _header_re = re.compile(_HEADER_TMPL, re.VERBOSE)
-    _key_re = re.compile(_KEY_TMPL, re.VERBOSE)
-    _eol_re = re.compile(_EOL_TMPL, re.VERBOSE)
+    _blank_re = re.compile(_BLANK_TMPL, re.VERBOSE | re.MULTILINE)
+    _header_re = re.compile(_HEADER_TMPL, re.VERBOSE | re.MULTILINE)
+    _key_re = re.compile(_KEY_TMPL, re.VERBOSE | re.MULTILINE)
+    _eol_re = re.compile(_EOL_TMPL, re.VERBOSE | re.MULTILINE)
 
     _json_decoder = json.JSONDecoder()
 
     def __init__(self, defaults=None, *,
-                 dict_type=dict, default_section='DEFAULTS'):
+                 dict_type=OrderedDict, default_section='DEFAULTS'):
         self._dict = dict_type
         self._default_section = default_section
         self._sections = self._dict()
@@ -273,7 +267,7 @@ class JSONConfigParser(OrderedDict):
         idx = 0
         lineno = 0
 
-        while True:
+        while idx < len(string):
             mo = self._header_re.match(string, idx)
             if mo:
                 sectname = mo.group('section')
@@ -294,7 +288,7 @@ class JSONConfigParser(OrderedDict):
                     self._sections[sectname] = cursect
                     self._proxies[sectname] = SectionProxy(self, sectname)
 
-                idx = mo.end() + 1
+                idx = mo.end()
             else:
                 # consume blank lines and comments
                 mo = self._blank_re.match(string, idx)
@@ -304,6 +298,7 @@ class JSONConfigParser(OrderedDict):
                 else:
                     mo = self._key_re.match(string, idx)
                     if not mo:
+                        print(repr(string[idx:]))
                         raise ParseError(
                             "expected section, comment or newline")
 
@@ -325,7 +320,6 @@ class JSONConfigParser(OrderedDict):
                     if not mo:
                         raise ParseError(repr(string[idx:]))
                     idx = mo.end()
-            lineno += 1
 
     @property
     def default_section(self):
