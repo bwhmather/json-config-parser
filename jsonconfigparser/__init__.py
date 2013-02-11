@@ -252,14 +252,23 @@ class JSONConfigParser(MutableMapping):
                 raise NoSectionError(section)
         sectdict[option] = value
 
-    def read(self, filnames, encoding=None):
-        pass
+    def read(self, filenames, encoding=None):
+        if isinstance(filenames, str):
+            filenames = [filenames]
+        for f in filenames:
+            try:
+                with open(f, 'r') as fp:
+                    self.read_file(fp)
+            except OSError:
+                # TODO other exceptions leave cfg object in an inconsitant
+                # state and are basically unrecoverable
+                continue
 
     def read_file(self, fp, filename=None):
-        pass
+        self.read_string(fp.read())
 
     def read_dict(self, dictionary):
-        pass
+        raise NotImplementedError()
 
     def read_string(self, string, fpname=None):
         sections_added = set()
@@ -320,7 +329,7 @@ class JSONConfigParser(MutableMapping):
                     # consume remaining comments and whitespace
                     mo = self._eol_re.match(string, idx)
                     if not mo:
-                        raise ParseError(repr(string[idx:]))
+                        raise ParseError("unexpected symbol or whitespace")
                     idx = mo.end()
 
     @property
