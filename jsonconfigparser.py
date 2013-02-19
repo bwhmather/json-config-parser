@@ -264,7 +264,21 @@ class JSONConfigParser(MutableMapping):
         self.read_string(fp.read())
 
     def read_dict(self, dictionary):
-        raise NotImplementedError()
+        # validate dictionary
+        for section, options in dictionary.items():
+            if not re.match('^\w[\-\w]*$', section):
+                raise InvalidSectionNameError(section)
+
+            for option in options:
+                if not re.match('^\w[\-\w]*$', option):
+                    raise InvalidOptionNameError(option, section=section)
+
+        # update config
+        for section, options in dictionary.items():
+            if not section in self:
+                self.add_section(section)
+
+            self[section].update(options)
 
     def read_string(self, string, fpname=None):
         sections_added = set()
