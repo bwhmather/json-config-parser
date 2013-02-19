@@ -186,7 +186,7 @@ class JSONConfigParser(MutableMapping):
             raise KeyError(key)
 
     def __contains__(self, key):
-        return key == self.default_section or key in self.sections
+        return key == self.default_section or key in self._sections
 
     def __len__(self):
         return len(self._sections) + 1
@@ -281,11 +281,8 @@ class JSONConfigParser(MutableMapping):
             self[section].update(options)
 
     def read_string(self, string, fpname=None):
-        sections_added = set()
-        entries_added = set()
-
-        sectname = None
-        cursect = None
+        config = {}
+        section = None
 
         idx = 0
         lineno = 0
@@ -295,23 +292,15 @@ class JSONConfigParser(MutableMapping):
                 mo = self._header_re.match(string, idx)
                 if not mo:
                     raise ParseError()
-                sectname = mo.group('section')
+                section = mo.group('section')
 
                 # check that section has not occured in this file before
-                if sectname in sections_added:
-                    raise DuplicateSectionError(sectname)
-                sections_added.add(sectname)
-                entries_added = set()
+                if section in config:
+                    raise DuplicateSectionError(section)
 
                 # find or create the section
-                if sectname == self.default_section:
-                    cursect = self._defaults
-                elif sectname in self._sections:
-                    cursect = self._sections[sectname]
-                else:
-                    cursect = self._dict()
-                    self._sections[sectname] = cursect
-                    self._proxies[sectname] = SectionProxy(self, sectname)
+                if section not in config:
+                    config[section] = {}
 
                 idx = mo.end()
             elif string[idx] in ['#', '\n', '\r']:
@@ -325,27 +314,27 @@ class JSONConfigParser(MutableMapping):
                     raise ParseError(
                         "expected section, option, comment or empty line")
 
-                if cursect is None:
+                if section is None:
                     raise MissingSectionHeaderError()
 
                 # read key
-                optname = mo.group('key')
+                option = mo.group('key')
                 idx = mo.end()
-                if optname in entries_added:
-                    raise DuplicateOptionError(sectname, optname,
+                if option in config[section]:
+                    raise DuplicateOptionError(section, option,
                                                fpname, lineno)
-                entries_added.add(optname)
 
                 # read value
                 # TODO increment lineno
-                optval, idx = self._json_decoder.raw_decode(string, idx)
-                cursect[optname] = optval
+                value, idx = self._json_decoder.raw_decode(string, idx)
+                config[section][option] = value
 
                 # consume remaining comments and whitespace
                 mo = self._eol_re.match(string, idx)
                 if not mo:
                     raise ParseError("unexpected symbol or whitespace")
                 idx = mo.end()
+        self.read_dict(config)
 
     @property
     def default_section(self):
@@ -370,7 +359,6 @@ class SectionProxy(MutableMapping):
         return self._parser.get(self._name, key)
 
     def __setitem__(self, key, value):
-        self._parser._validate_value_types(option=key, value=value)
         return self._parser.set(self._name, key, value)
 
     def __delitem__(self, key):
