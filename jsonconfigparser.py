@@ -309,6 +309,7 @@ class JSONConfigParser(MutableMapping):
                 idx = mo.end()
             else:
                 # hopefully a key value pair
+                # read option
                 mo = self._key_re.match(string, idx)
                 if not mo:
                     raise ParseError(
@@ -317,12 +318,12 @@ class JSONConfigParser(MutableMapping):
                 if section is None:
                     raise MissingSectionHeaderError()
 
-                # read key
                 option = mo.group('key')
-                idx = mo.end()
                 if option in config[section]:
                     raise DuplicateOptionError(section, option,
                                                fpname, lineno)
+
+                idx = mo.end()
 
                 # read value
                 # TODO increment lineno
