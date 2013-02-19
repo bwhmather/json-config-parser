@@ -17,7 +17,6 @@ _UNSET = object()
 
 class ParseError(BaseException):
     def __init__(self, message, **kwargs):
-
         info = []
         if 'filename' in kwargs:
             info.append('file: %s' % kwargs['filename'])
@@ -99,7 +98,7 @@ class JSONConfigParser(MutableMapping):
         """
 
     _HEADER_TMPL = r"""
-        #^
+        ^
         \[
         (?P<section>[\-\w]+)
         \]
@@ -107,6 +106,7 @@ class JSONConfigParser(MutableMapping):
         """
 
     _KEY_TMPL = r"""
+        ^
         (?P<key>[\-\w]+)            # at least one letter underscore or hyphen
         \s*                         # optional whitespace
         =                           # followed by '='
@@ -199,7 +199,7 @@ class JSONConfigParser(MutableMapping):
 
     def options(self, section):
         """Return a list of option names for the given section name."""
-        if not has_section(section):
+        if not self.has_section(section):
             raise NoSectionError(section)
 
         return self._section.keys()
@@ -280,8 +280,10 @@ class JSONConfigParser(MutableMapping):
         lineno = 0
 
         while idx < len(string):
-            mo = self._header_re.match(string, idx)
-            if mo:
+            if string[idx] == '[':
+                mo = self._header_re.match(string, idx)
+                if not mo:
+                    raise ParseError()
                 sectname = mo.group('section')
 
                 # check that section has not occured in this file before
@@ -301,35 +303,35 @@ class JSONConfigParser(MutableMapping):
                     self._proxies[sectname] = SectionProxy(self, sectname)
 
                 idx = mo.end()
-            else:
+            elif string[idx] in ['#', '\n', '\r']:
                 # consume blank lines and comments
                 mo = self._blank_re.match(string, idx)
-                if mo:
-                    idx = mo.end()
-                else:
-                    mo = self._key_re.match(string, idx)
-                    if not mo:
-                        raise ParseError(
-                            "expected section, comment or newline")
+                idx = mo.end()
+            else:
+                # hopefully a key value pair
+                mo = self._key_re.match(string, idx)
+                if not mo:
+                    raise ParseError(
+                        "expected section, option, comment or empty line")
 
-                    # read key
-                    optname = mo.group('key')
-                    idx = mo.end()
-                    if optname in entries_added:
-                        raise DuplicateOptionError(sectname, optname,
-                                                   fpname, lineno)
-                    entries_added.add(optname)
+                # read key
+                optname = mo.group('key')
+                idx = mo.end()
+                if optname in entries_added:
+                    raise DuplicateOptionError(sectname, optname,
+                                               fpname, lineno)
+                entries_added.add(optname)
 
-                    # read value
-                    # TODO increment lineno
-                    optval, idx = self._json_decoder.raw_decode(string, idx)
-                    cursect[optname] = optval
+                # read value
+                # TODO increment lineno
+                optval, idx = self._json_decoder.raw_decode(string, idx)
+                cursect[optname] = optval
 
-                    # consume remaining comments and whitespace
-                    mo = self._eol_re.match(string, idx)
-                    if not mo:
-                        raise ParseError("unexpected symbol or whitespace")
-                    idx = mo.end()
+                # consume remaining comments and whitespace
+                mo = self._eol_re.match(string, idx)
+                if not mo:
+                    raise ParseError("unexpected symbol or whitespace")
+                idx = mo.end()
 
     @property
     def default_section(self):
