@@ -57,14 +57,6 @@ class InvalidOptionNameError(ParseError):
         ParseError.__init__(self, msg, **kwargs)
 
 
-class NoSectionError(KeyError):
-    pass
-
-
-class NoOptionError(KeyError):
-    pass
-
-
 class DuplicateSectionError(ParseError):
     """Raised when a section is repeated in an input source.
 
@@ -87,6 +79,14 @@ class DuplicateOptionError(ParseError):
     def __init__(self, option, **kwargs):
         msg = 'Duplicate definition of option: %s' % repr(option)
         ParseError.__init__(self, msg, **kwargs)
+
+
+class NoSectionError(KeyError):
+    pass
+
+
+class NoOptionError(KeyError):
+    pass
 
 
 class JSONConfigParser(MutableMapping):
