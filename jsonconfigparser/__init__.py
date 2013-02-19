@@ -1,4 +1,4 @@
-from collections import MutableMapping, OrderedDict
+from collections import MutableMapping, OrderedDict, ChainMap
 
 import itertools
 
@@ -128,8 +128,8 @@ class JSONConfigParser(MutableMapping):
                  dict_type=OrderedDict, default_section=DEFAULT_SECT):
         self._dict = dict_type
         self._default_section = default_section
-        self._sections = self._dict()
         self._defaults = self._dict()
+        self._sections = self._dict()
         self._proxies = self._dict()
         self._proxies[default_section] = SectionProxy(self, default_section)
         if defaults:
@@ -150,7 +150,8 @@ class JSONConfigParser(MutableMapping):
 
         if section in self._sections:
             raise DuplicateSectionError(section)
-        self._sections[section] = self._dict()
+
+        self._sections[section] = ChainMap({}, self._defaults)
         self._proxies[section] = SectionProxy(self, section)
 
     def has_section(self, section):
@@ -198,12 +199,10 @@ class JSONConfigParser(MutableMapping):
 
     def options(self, section):
         """Return a list of option names for the given section name."""
-        try:
-            opts = iter(set(self._sections[section].keys() +
-                            self._defaults.keys()))
-        except KeyError:
+        if not has_section(section):
             raise NoSectionError(section)
-        return opts
+
+        return self._section.keys()
 
     def get(self, section, option, fallback=_UNSET, *, vars=None):
         """Get an option value for a given section.
@@ -215,21 +214,21 @@ class JSONConfigParser(MutableMapping):
 
         The section DEFAULT is special.
         """
-        if not self.has_section(section):
+        if section is self.default_section:
+            section_dict = self._defaults
+        elif section in self._sections:
+            section_dict = self._sections[section]
+        else:
             raise NoSectionError(section)
 
-        if vars is not None and option in vars:
-            return vars[option]
+        if vars is not None:
+            section_dict = ChainMap(vars, section_dict)
 
-        if section is not self.default_section:
-            if option in self._sections[section]:
-                return self._sections[section][option]
-
-        if option in self._defaults:
-            return self._defaults[option]
+        if option in section_dict:
+            return section_dict[option]
 
         if fallback is _UNSET:
-            raise KeyError(option)
+            raise NoOptionError(option)
 
         return fallback
 
