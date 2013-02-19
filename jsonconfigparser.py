@@ -37,12 +37,9 @@ class ParseError(BaseException):
 class MissingSectionHeaderError(ParseError):
     """Raised if an option occurs before the first header
     """
-    def __init__(self, filename, lineno, line):
-        BaseException.__init__(
-            self,
-            'No section header before first option.\n' +
-            'file: %s, line: %d\n%r' %
-            (filename, lineno, line))
+    def __init__(self, **kwargs):
+        msg = 'No section header before first option.'
+        ParseError.__init__(self, msg, **kwargs)
 
 
 class InvalidSectionNameError(ParseError):
@@ -313,6 +310,9 @@ class JSONConfigParser(MutableMapping):
                 if not mo:
                     raise ParseError(
                         "expected section, option, comment or empty line")
+
+                if cursect is None:
+                    raise MissingSectionHeaderError()
 
                 # read key
                 optname = mo.group('key')
