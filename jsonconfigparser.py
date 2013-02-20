@@ -139,17 +139,20 @@ class JSONConfigParser(MutableMapping):
     def add_section(self, section):
         """Create a new section in the configuration.
 
-        Raise DuplicateSectionError if a section by the specified name
-        already exists. Raise ValueError if name is DEFAULT.
+        Raises ValueError if name is the same as the default section.
+        If section name is valid, returns True if it already exists and False
+        otherwise.
         """
         if section == self.default_section:
             raise ValueError('Invalid section name: %r' % section)
 
         if section in self._sections:
-            raise DuplicateSectionError(section)
+            return True
 
         self._sections[section] = ChainMap({}, self._defaults)
         self._proxies[section] = SectionProxy(self, section)
+
+        return False
 
     def has_section(self, section):
         return section in self._sections
