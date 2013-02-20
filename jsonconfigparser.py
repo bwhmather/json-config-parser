@@ -236,8 +236,7 @@ class JSONConfigParser(MutableMapping):
         if not section or section == self.default_section:
             return option in self._defaults
         elif section in self._sections:
-            return (option in self._sections[section] or
-                    option in self._defaults)
+            return option in self._sections[section]
         else:
             return False
 
