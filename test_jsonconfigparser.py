@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 
-from jsonconfigparser import JSONConfigParser
+from jsonconfigparser import JSONConfigParser, NoSectionError
 
 
 class JSONConfigTestCase(unittest.TestCase):
@@ -15,7 +15,6 @@ class JSONConfigTestCase(unittest.TestCase):
                  '\n' + \
                  '[section2]\n' + \
                  'bar = "baz"\n'
-
 
         cf = JSONConfigParser()
         cf.read_string(string)
@@ -42,14 +41,62 @@ class JSONConfigTestCase(unittest.TestCase):
         cf.set('section', 'section', 'set-in-section')
         self.assertEqual(cf.get('section', 'section'), 'set-in-section')
 
-        cf.set(cf.default_section, 'defaults', 'set-in-defaults')
-        self.assertEqual(cf.get('section', 'defaults'), 'set-in-defaults')
+    def test_get_from_defaults(self):
+        cf = JSONConfigParser()
 
-        self.assertEqual(cf.get('section', 'vars',
-                                vars={'vars': 'set-in-vars'}),
-                         'set-in-vars')
+        cf.set(cf.default_section, 'option', 'set-in-defaults')
+        with self.assertRaises(NoSectionError,
+                               msg="Only fall back to defaults if section \
+                                    exists"):
+            cf.get('section', 'option')
 
+        cf.add_section('section')
+        self.assertEqual(cf.get('section', 'option'), 'set-in-defaults',
+                         msg="get should fall back to defaults if value not \
+                              set in section")
+
+    def test_get_from_vars(self):
+        cf = JSONConfigParser()
+        cf.add_section('section')
+        cf.set('section', 'option', 'set-in-section')
+
+        self.assertEqual(cf.get('section', 'option',
+                                vars={'option': 'set-in-vars'}),
+                         'set-in-vars',
+                         msg="vars should take priority over options in \
+                              section")
+
+        self.assertEqual(cf.get('section', 'option', vars={}),
+                         'set-in-section',
+                         msg="get should fall back to section if option not \
+                              in vars")
+
+    def test_get_from_fallback(self):
+        cf = JSONConfigParser()
+        cf.add_section('section')
+
+        # returns from fallback if section exists
         self.assertEqual(cf.get('section', 'unset', 'fallback'), 'fallback')
+
+        with self.assertRaises(NoSectionError,
+                               msg=""):
+            cf.get('nosection', 'unset', 'fallback')
+
+    def test_has_option(self):
+        cf = JSONConfigParser()
+
+        # option in nonexistant section does not exist
+        self.assertFalse(cf.has_option('nonexistant', 'unset'))
+
+        cf.add_section('section')
+        self.assertFalse(cf.has_option('section', 'unset'),
+                         msg="has_option should return False if section \
+                              exists but option is unset")
+
+        cf.set(cf.default_section, 'default', 'set-in-defaults')
+        self.assertTrue(cf.has_option('section', 'default'),
+                        msg="has_option should return True if option set in \
+                             defaults")
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(JSONConfigTestCase)
