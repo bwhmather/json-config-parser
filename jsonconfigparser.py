@@ -248,7 +248,7 @@ class JSONConfigParser(MutableMapping):
                 raise NoSectionError(section)
         sectdict[option] = value
 
-    def read(self, filenames, encoding=None):
+    def read(self, filenames, encoding=None, *, skip=False):
         if isinstance(filenames, str):
             filenames = [filenames]
         for f in filenames:
@@ -256,9 +256,11 @@ class JSONConfigParser(MutableMapping):
                 with open(f, 'r') as fp:
                     self.read_file(fp)
             except OSError:
-                # TODO other exceptions leave cfg object in an inconsitant
-                # state and are basically unrecoverable
-                continue
+                # if file could not be found, skip it
+                if skip:
+                    continue
+                else:
+                    raise
 
     def read_file(self, fp, filename=None):
         self.read_string(fp.read())
