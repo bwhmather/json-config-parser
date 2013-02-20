@@ -248,6 +248,19 @@ class JSONConfigParser(MutableMapping):
                 raise NoSectionError(section)
         sectdict[option] = value
 
+    def remove_option(self, section, option):
+        if not section or section == self._default_section:
+            section_dict = self._defaults
+        elif section in self._sections:
+            section_dict = self._section[section]
+        else:
+            raise NoSectionError(section)
+
+        existed = option in section_dict
+        if existed:
+            del self._sections[section]
+        return existed
+
     def read(self, filenames, encoding=None, *, skip=False):
         if isinstance(filenames, str):
             filenames = [filenames]
@@ -365,8 +378,7 @@ class SectionProxy(MutableMapping):
         return self._parser.set(self._name, key, value)
 
     def __delitem__(self, key):
-        if not (self._parser.has_option(self._name, key) and
-                self._parser.remove_option(self._name, key)):
+        if not self._parser.remove_option(self._name, key):
             raise KeyError(key)
 
     def __contains__(self, key):
