@@ -277,8 +277,8 @@ class JSONConfigParser(MutableMapping):
                 else:
                     raise
 
-    def read_file(self, fp, filename=None):
-        self.read_string(fp.read())
+    def read_file(self, fp, fpname=None):
+        self.read_string(fp.read(), fpname=fpname)
 
     def read_dict(self, dictionary):
         # validate dictionary
