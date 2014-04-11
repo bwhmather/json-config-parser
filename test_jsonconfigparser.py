@@ -9,17 +9,17 @@ class JSONConfigTestCase(unittest.TestCase):
         JSONConfigParser()
 
     def test_read_string(self):
-        string = (
+        string =
+
+        cf = JSONConfigParser()
+        cf.read_string((
             '[section]\n'
             '# comment comment\n'
             'foo = "bar"\n'
             '\n'
             '[section2]\n'
             'bar = "baz"\n'
-        )
-
-        cf = JSONConfigParser()
-        cf.read_string(string)
+        ))
 
         self.assertEqual(cf.get('section', 'foo'), 'bar')
 
@@ -101,20 +101,14 @@ class JSONConfigTestCase(unittest.TestCase):
                              defaults")
 
     def test_invalid_section(self):
-        empty = (
-            '[valid]\n'
-            'irrelevant = "meh"\n'
-            '[]'
-        )
-
-        never_ending = (
-            '[nooooooooooooooooooo'
-        )
-
         cf = JSONConfigParser()
 
         try:
-            cf.read_string(empty)
+            cf.read_string((
+                '[valid]\n'
+                'irrelevant = "meh"\n'
+                '[]'
+            ))
         except ParseError as e:
             self.assertEqual(e.lineno, 2)
 
@@ -124,7 +118,9 @@ class JSONConfigTestCase(unittest.TestCase):
             self.fail()
 
         try:
-            cf.read_string(never_ending)
+            cf.read_string((
+                '[nooooooooooooooooooo'
+            ))
         except ParseError as e:
             self.assertEqual(e.lineno, 0)
 
