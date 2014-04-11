@@ -19,14 +19,14 @@ class ParseError(BaseException):
     def __init__(self, message, **kwargs):
         info = []
         if 'filename' in kwargs:
-            info.append('file: %s' % kwargs['filename'])
-        if 'section' in kwargs:
-            info.append('section: %s' % kwargs['section'])
+            info.append('File: %s' % repr(kwargs['filename']))
         if 'lineno' in kwargs:
-            info.append('line: %s' % kwargs['lineno'])
+            info.append('Line: %s' % kwargs['lineno'])
+        if 'section' in kwargs and kwargs['section'] is not None:
+            info.append('in %s' % kwargs['section'])
 
         if len(info):
-            message.append(', '.join(info) + '\n')
+            message = ', '.join(info) + '\n' + message
 
         if 'line' in kwargs:
             message.append(kwargs['line'])
