@@ -3,9 +3,6 @@ Json Config Parser
 
 A straightforward and unambiguous config file parser.
 
-Files are structured using square bracket sections, ``#`` comments and ``$key = $value`` options.  Option values are written in json and can lists and dictionaries be spread over any number of lines.
-To keep parsing simple and files neat, comments, section headers and keys can not be indented and no whitespace is allowed on empty lines.
-
 This package was originally based on the configparser module that comes in the standard python distribution but has been almost entirely rewritten.
 
 
@@ -18,6 +15,9 @@ Will be available on pypi when ready
 
 Syntax
 ------
+
+Files are structured using square bracket sections, ``#`` comments and ``$key = $value`` options.  Option values are written in json and can lists and dictionaries be spread over any number of lines.
+To keep parsing simple and files neat, comments, section headers and keys can not be indented and no whitespace is allowed on empty lines.
 
 Comments start at the beginning of a line with a ``#`` symbol and extend to the line's end.
 
