@@ -332,7 +332,12 @@ class JSONConfigParser(MutableMapping):
             if string[idx] == '[':
                 mo = self._header_re.match(string, idx)
                 if not mo:
-                    raise ParseError()
+                    lineno, line = get_line(string, idx)
+                    raise ParseError(
+                        'could not parse section header',
+                        filename=fpname,
+                        lineno=lineno, line=line
+                    )
                 section = mo.group('section')
 
                 # check that section has not occured in this file before
