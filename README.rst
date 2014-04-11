@@ -14,9 +14,20 @@ This package was originally based on the configparser module that comes in the s
 Installation
 ------------
 
+Available on pypi as `json-config-parser <pypi_>`
+
+To install run
+
+.. code:: sh
+    pip install json-config-parser
+
+
+Alternatively grab the code from `github <project_page_>` and run:
+
+.. code:: sh
+
     python setup.py install
 
-Will be available on pypi when ready
 
 Syntax
 ------
@@ -67,5 +78,6 @@ Please report any problems on the `bugtracker`_ and I will do my best to fix the
 Pull requests are also welcome.
 
 
+.. _pypi: https://pypi.python.org/pypi/json-config-parser/
 .. _project_page: https://github.com/bwhmather/json-config-parser
 .. _bugtracker: https://github.com/bwhmather/json-config-parser/issues
