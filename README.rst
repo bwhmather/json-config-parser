@@ -1,3 +1,8 @@
+.. image:: https://travis-ci.org/bwhmather/json-config-parser.png?branch=master
+    :target: http://travis-ci.org/bwhmather/json-config-parser
+    :alt: Build Status
+
+
 Json Config Parser
 ==================
 
