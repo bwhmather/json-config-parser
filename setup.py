@@ -13,6 +13,7 @@ setup(
     author='Ben Mather',
     author_email='bwhmather@bwhmather.com',
     description='A straightforward and unambiguous config file parser.',
+    license='BSD',
     long_description=__doc__,
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -22,6 +23,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules',
+        'License :: OSI Approved :: BSD License',
         ],
     platforms='any',
     url='https://github.com/bwhmather/json-config-parser/',
