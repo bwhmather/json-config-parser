@@ -16,22 +16,35 @@ _UNSET = object()
 
 
 class ParseError(BaseException):
-    def __init__(self, message, **kwargs):
-        info = []
-        if 'filename' in kwargs:
-            info.append('File: %s' % repr(kwargs['filename']))
-        if 'lineno' in kwargs:
-            info.append('Line: %s' % kwargs['lineno'])
-        if 'section' in kwargs and kwargs['section'] is not None:
-            info.append('in %s' % kwargs['section'])
+    def __init__(self, message, *,
+                 filename=None, lineno=None, section=None, line=None):
+        super(ParseError, self).__init__(self)
 
-        if len(info):
-            message = ', '.join(info) + '\n' + message
+        self.message = message
+        self.filename = filename
+        self.lineno = lineno
+        self.section = section
+        self.line = line
 
-        if 'line' in kwargs:
-            message.append(kwargs['line'])
+    def __str__(self):
+        location = []
+        if self.filename:
+            location.append('File: %s' % repr(self.filename))
+        if self.lineno is not None:
+            location.append('Line: %i' % self.lineno)
+        if self.section:
+            location.append('in %s' % self.section)
 
-        BaseException.__init__(self, message)
+        output = ', '.join(location)
+        if output:
+            output += '\n'
+
+        if self.line:
+            output += '  ' + self.line.strip() + '\n'
+
+        output += '%s: %s' % (self.__class__.__name__, self.message)
+
+        return output
 
 
 class MissingSectionHeaderError(ParseError):
