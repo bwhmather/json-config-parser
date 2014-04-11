@@ -383,7 +383,11 @@ class JSONConfigParser(MutableMapping):
                 # consume remaining comments and whitespace
                 mo = self._eol_re.match(string, idx)
                 if not mo:
-                    raise ParseError("unexpected symbol or whitespace")
+                    raise ParseError(
+                        "unexpected symbol or whitespace",
+                        filename=fpname, section=section,
+                        lineno=lineno, line=line
+                    )
                 idx = mo.end()
         self.read_dict(config)
 
