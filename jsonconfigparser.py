@@ -104,12 +104,15 @@ class NoOptionError(KeyError):
 
 def get_line(string, idx):
     """ Given a string and the index of a character in the string, returns the
-    number and contents of the line containing the referenced character
+    number and contents of the line containing the referenced character and the
+    index of the character on that line.
+
+    Spectacularly inefficient but only called in exception handling
     """
     for lineno, line in enumerate(string.splitlines(True)):
+        if idx < len(line):
+            return lineno, idx, line
         idx -= len(line)
-        if idx < 0:
-            return lineno, line
     raise IndexError()
 
 
@@ -334,11 +337,12 @@ class JSONConfigParser(MutableMapping):
             if string[idx] == '[':
                 mo = self._header_re.match(string, idx)
                 if not mo:
-                    lineno, line = get_line(string, idx)
+                    lineno, column, line = get_line(string, idx)
                     raise ParseError(
                         'could not parse section header',
                         filename=fpname,
-                        lineno=lineno, line=line
+                        lineno=lineno, column=column,
+                        line=line
                     )
                 section = mo.group('section')
 
@@ -360,11 +364,12 @@ class JSONConfigParser(MutableMapping):
                 # read option
                 mo = self._key_re.match(string, idx)
                 if not mo:
-                    lineno, line = get_line(string, idx)
+                    lineno, column, line = get_line(string, idx)
                     raise ParseError(
                         "expected section, option, comment or empty line",
                         filename=fpname, section=section,
-                        lineno=lineno, line=line
+                        lineno=lineno, column=column,
+                        line=line
                     )
 
                 if section is None:
@@ -384,11 +389,12 @@ class JSONConfigParser(MutableMapping):
                 # consume remaining comments and whitespace
                 mo = self._eol_re.match(string, idx)
                 if not mo:
-                    lineno, line = get_line(string, idx)
+                    lineno, column, line = get_line(string, idx)
                     raise ParseError(
                         "unexpected symbol or whitespace",
                         filename=fpname, section=section,
-                        lineno=lineno, line=line
+                        lineno=lineno, column=column,
+                        line=line
                     )
                 idx = mo.end()
         self.read_dict(config)
