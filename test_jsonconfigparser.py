@@ -9,9 +9,8 @@ class JSONConfigTestCase(unittest.TestCase):
         JSONConfigParser()
 
     def test_read_string(self):
-        string =
-
         cf = JSONConfigParser()
+
         cf.read_string((
             '[section]\n'
             '# comment comment\n'
