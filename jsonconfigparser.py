@@ -283,11 +283,11 @@ class JSONConfigParser(MutableMapping):
     def read_dict(self, dictionary):
         # validate dictionary
         for section, options in dictionary.items():
-            if not re.match('^\w[\-\w]*$', section):
+            if not re.match(r'^\w[\-\w]*$', section):
                 raise InvalidSectionNameError(section)
 
             for option in options:
-                if not re.match('^\w[\-\w]*$', option):
+                if not re.match(r'^\w[\-\w]*$', option):
                     raise InvalidOptionNameError(option, section=section)
 
         # update config
