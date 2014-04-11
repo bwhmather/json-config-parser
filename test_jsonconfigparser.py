@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 
-from jsonconfigparser import JSONConfigParser, NoSectionError
+from jsonconfigparser import JSONConfigParser, NoSectionError, ParseError
 
 
 class JSONConfigTestCase(unittest.TestCase):
@@ -99,6 +99,22 @@ class JSONConfigTestCase(unittest.TestCase):
         self.assertTrue(cf.has_option('section', 'default'),
                         msg="has_option should return True if option set in \
                              defaults")
+
+    def test_invalid_section(self):
+        empty = (
+            '[valid]\n'
+            'irrelevant = "meh"\n'
+            '[]'
+        )
+
+        cf = JSONConfigParser()
+
+        try:
+            cf.read_string(empty)
+        except ParseError as e:
+            self.assertEqual(e.lineno, 2)
+        else:
+            self.fail()
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(JSONConfigTestCase)
