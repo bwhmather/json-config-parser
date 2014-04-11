@@ -1,5 +1,13 @@
 language: python
 python:
   - "3.3"
-install: "" # no dependencies, nothing to do
-script: nosetests
+
+install:
+  - "pip install -e ."
+  - "pip install pyflakes"
+  - "pip install pep8"
+
+script:
+  - python setup.py test;
+  - pep8 werkzeug_dispatch
+  - pyflakes werkzeug_dispatch
