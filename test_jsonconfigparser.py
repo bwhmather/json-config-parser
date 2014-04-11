@@ -107,12 +107,29 @@ class JSONConfigTestCase(unittest.TestCase):
             '[]'
         )
 
+        never_ending = (
+            '[nooooooooooooooooooo'
+        )
+
         cf = JSONConfigParser()
 
         try:
             cf.read_string(empty)
         except ParseError as e:
             self.assertEqual(e.lineno, 2)
+
+            # check that nothing was added
+            self.assertEqual(sum(1 for _ in cf.sections()), 0)
+        else:
+            self.fail()
+
+        try:
+            cf.read_string(never_ending)
+        except ParseError as e:
+            self.assertEqual(e.lineno, 0)
+
+            # check that nothing was added
+            self.assertEqual(sum(1 for _ in cf.sections()), 0)
         else:
             self.fail()
 
