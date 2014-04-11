@@ -99,6 +99,17 @@ class NoOptionError(KeyError):
     pass
 
 
+def get_line(string, idx):
+    """ Given a string and the index of a character in the string, returns the
+    number and contents of the line containing the referenced character
+    """
+    for lineno, line in enumerate(string.splitlines(True)):
+        idx -= len(line)
+        if idx < 0:
+            return lineno, line
+    raise IndexError()
+
+
 class JSONConfigParser(MutableMapping):
 
     _BLANK_TMPL = r"""
@@ -342,8 +353,12 @@ class JSONConfigParser(MutableMapping):
                 # read option
                 mo = self._key_re.match(string, idx)
                 if not mo:
+                    lineno, line = get_line(string, idx)
                     raise ParseError(
-                        "expected section, option, comment or empty line")
+                        "expected section, option, comment or empty line",
+                        filename=fpname, section=section,
+                        lineno=lineno, line=line
+                    )
 
                 if section is None:
                     raise MissingSectionHeaderError()
