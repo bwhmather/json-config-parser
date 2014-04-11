@@ -268,7 +268,7 @@ class JSONConfigParser(MutableMapping):
             filenames = [filenames]
         for f in filenames:
             try:
-                with open(f, 'r') as fp:
+                with open(f, 'r', encoding=encoding) as fp:
                     self.read_file(fp)
             except OSError:
                 # if file could not be found, skip it
