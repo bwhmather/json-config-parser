@@ -202,7 +202,7 @@ class JSONConfigParser(MutableMapping):
         if not self.has_section(section):
             raise NoSectionError(section)
 
-        return self._section.keys()
+        return self._sections.keys()
 
     def get(self, section, option, fallback=_UNSET, *, vars=None):
         """Get an option value for a given section.
