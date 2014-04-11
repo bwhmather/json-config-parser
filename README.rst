@@ -2,10 +2,11 @@ Json Config Parser
 ==================
 
 A straightforward and unambiguous config file parser.
-Files are structured using square bracket sections, `#` comments and `$key = $value` options.  Option values are written in json and can lists and dictionaries be spread over any number of lines.
+
+Files are structured using square bracket sections, ``#`` comments and ``$key = $value`` options.  Option values are written in json and can lists and dictionaries be spread over any number of lines.
 To keep parsing simple and files neat, comments, section headers and keys can not be indented and no whitespace is allowed on empty lines.
 
-The module is based on the configparser module that comes in the standard python distribution but has been mostly rewritten.
+This package was originally based on the configparser module that comes in the standard python distribution but has been almost entirely rewritten.
 
 
 Installation
@@ -18,12 +19,13 @@ Will be available on pypi when ready
 Syntax
 ------
 
-Comments start at the beginning of a line with a `#` symbol and extend to the line's end.
+Comments start at the beginning of a line with a ``#`` symbol and extend to the line's end.
 
 
 Usage
 -----
 
+.. code:: python
     cfg = JSONConfigParser()
 
     cfg.read_string("""
@@ -53,8 +55,12 @@ Usage
     cfg.get("section", "default-setting")
 
 
-Bugs and Feature Requests
--------------------------
+Bugs
+----
 
-Bugtracker is at [https://github.com/bwhmather/json-config-parser/issues]().
-Pull requests welcome!
+Please report any problems on the `bugtracker`_ and I will do my best to fix them.
+Pull requests are also welcome.
+
+
+.. _project_page: https://github.com/bwhmather/json-config-parser
+.. _bugtracker: https://github.com/bwhmather/json-config-parser/issues
