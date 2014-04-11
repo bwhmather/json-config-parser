@@ -326,7 +326,6 @@ class JSONConfigParser(MutableMapping):
         section = None
 
         idx = 0
-        lineno = 0
 
         while idx < len(string):
             if string[idx] == '[':
@@ -376,7 +375,6 @@ class JSONConfigParser(MutableMapping):
                 idx = mo.end()
 
                 # read value
-                # TODO increment lineno
                 value, idx = self._json_decoder.raw_decode(string, idx)
                 config[section][option] = value
 
