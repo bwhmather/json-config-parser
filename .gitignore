@@ -1,2 +1,2 @@
-*.pyc
-__pycache__
+*.egg-info/
+__pycache__/
