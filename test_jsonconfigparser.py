@@ -11,11 +11,11 @@ class JSONConfigTestCase(unittest.TestCase):
     def test_read_string(self):
         string = (
             '[section]\n'
-             '# comment comment\n'
-             'foo = "bar"\n'
-             '\n'
-             '[section2]\n'
-             'bar = "baz"\n'
+            '# comment comment\n'
+            'foo = "bar"\n'
+            '\n'
+            '[section2]\n'
+            'bar = "baz"\n'
         )
 
         cf = JSONConfigParser()
