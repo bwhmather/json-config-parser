@@ -292,7 +292,7 @@ class JSONConfigParser(MutableMapping):
 
         # update config
         for section, options in dictionary.items():
-            if not section in self:
+            if section not in self:
                 self.add_section(section)
 
             self[section].update(options)
