@@ -9,5 +9,5 @@ install:
 
 script:
   - python setup.py test;
-  - pep8 werkzeug_dispatch
-  - pyflakes werkzeug_dispatch
+  - pep8 .
+  - pyflakes .
