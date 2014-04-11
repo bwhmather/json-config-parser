@@ -254,7 +254,7 @@ class JSONConfigParser(MutableMapping):
         if not section or section == self._default_section:
             section_dict = self._defaults
         elif section in self._sections:
-            section_dict = self._section[section]
+            section_dict = self._sections[section]
         else:
             raise NoSectionError(section)
 
