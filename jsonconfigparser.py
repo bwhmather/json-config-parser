@@ -17,13 +17,16 @@ _UNSET = object()
 
 class ParseError(BaseException):
     def __init__(self, message, *,
-                 filename=None, lineno=None, section=None, line=None):
+                 filename=None, section=None,
+                 lineno=None, column=None,
+                 line=None):
         super(ParseError, self).__init__(self)
 
         self.message = message
         self.filename = filename
-        self.lineno = lineno
         self.section = section
+        self.lineno = lineno
+        self.column = column
         self.line = line
 
     def __str__(self):
