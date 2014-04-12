@@ -46,10 +46,12 @@ class JSONConfigTestCase(unittest.TestCase):
         cf = JSONConfigParser()
 
         cf.set(cf.default_section, 'option', 'set-in-defaults')
-        with self.assertRaises(NoSectionError,
-                               msg="Only fall back to defaults if section \
-                                    exists"):
+        try:
             cf.get('section', 'option')
+        except NoSectionError:
+            pass
+        else:
+            self.fail("Only fall back to defaults if section exists")
 
         cf.add_section('section')
         self.assertEqual(cf.get('section', 'option'), 'set-in-defaults',
@@ -84,9 +86,12 @@ class JSONConfigTestCase(unittest.TestCase):
         # returns from fallback if section exists
         self.assertEqual(cf.get('section', 'unset', 'fallback'), 'fallback')
 
-        with self.assertRaises(NoSectionError,
-                               msg=""):
+        try:
             cf.get('nosection', 'unset', 'fallback')
+        except NoSectionError:
+            pass
+        else:
+            self.fail()
 
     def test_has_option(self):
         cf = JSONConfigParser()
