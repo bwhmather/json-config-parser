@@ -14,6 +14,17 @@ __all__ = ['ParseError',
 DEFAULT_SECT = 'DEFAULT'
 _UNSET = object()
 
+_JSON_ERROR_TMPL = r"""
+    ^
+    (?P<message> .*):                           # message
+    \ line\ (?P<lineno> [0-9]+)                 # line number
+    \ column\ (?P<column> [0-9]+)               # column
+    (\ -\ line\ [0-9]+\ column\ [0-9]+\ -)?     # optional end of error
+    \ \(char\ ([0-9]+)\)                        # index in string
+    $
+    """
+_json_error_re = re.compile(_JSON_ERROR_TMPL, re.VERBOSE | re.MULTILINE)
+
 
 class ParseError(BaseException):
     def __init__(self, message, *,
@@ -102,6 +113,17 @@ class NoOptionError(KeyError):
     pass
 
 
+def parse_json_error(json_error):
+    mo = _json_error_re.match(json_error)
+    if not mo:
+        raise Exception("TODO")
+    return (
+        mo.group('message'),
+        int(mo.group('lineno')),
+        int(mo.group('column'))
+    )
+
+
 def get_line(string, idx):
     """ Given a string and the index of a character in the string, returns the
     number and contents of the line containing the referenced character and the
@@ -111,7 +133,7 @@ def get_line(string, idx):
     """
     for lineno, line in enumerate(string.splitlines(True)):
         if idx < len(line):
-            return lineno, idx, line
+            return lineno + 1, idx, line
         idx -= len(line)
     raise IndexError()
 
@@ -383,7 +405,18 @@ class JSONConfigParser(MutableMapping):
                 idx = mo.end()
 
                 # read value
-                value, idx = self._json_decoder.raw_decode(string, idx)
+                try:
+                    value, idx = self._json_decoder.raw_decode(string, idx)
+                except ValueError as e:
+                    message, lineno, column = parse_json_error(e.args[0])
+                    line = string.splitlines()[lineno-1]
+                    raise ParseError(
+                        message,
+                        filename=fpname, section=section,
+                        lineno=lineno, column=column,
+                        line=line
+                    )
+
                 config[section][option] = value
 
                 # consume remaining comments and whitespace

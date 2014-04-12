@@ -109,7 +109,7 @@ class JSONConfigTestCase(unittest.TestCase):
                 '[]'
             ))
         except ParseError as e:
-            self.assertEqual(e.lineno, 2)
+            self.assertEqual(e.lineno, 3)
 
             # check that nothing was added
             self.assertEqual(sum(1 for _ in cf.sections()), 0)
@@ -121,7 +121,7 @@ class JSONConfigTestCase(unittest.TestCase):
                 '[nooooooooooooooooooo'
             ))
         except ParseError as e:
-            self.assertEqual(e.lineno, 0)
+            self.assertEqual(e.lineno, 1)
 
             # check that nothing was added
             self.assertEqual(sum(1 for _ in cf.sections()), 0)
@@ -134,10 +134,13 @@ class JSONConfigTestCase(unittest.TestCase):
         try:
             cf.read_string((
                 '[section]\n'
-                'unmatched = [1,2,3}\n'
+                'unmatched = [1,2,3}'
             ))
-        except Exception:
-            pass
+        except ParseError as e:
+            self.assertEqual(e.lineno, 2)
+
+            # check that nothing was added
+            self.assertEqual(sum(1 for _ in cf.sections()), 0)
         else:
             self.fail()
 
@@ -146,8 +149,11 @@ class JSONConfigTestCase(unittest.TestCase):
                 '[section]\n'
                 'unterminated = "something\n'
             ))
-        except Exception:
-            pass
+        except ParseError as e:
+            self.assertEqual(e.lineno, 2)
+
+            # check that nothing was added
+            self.assertEqual(sum(1 for _ in cf.sections()), 0)
         else:
             self.fail()
 
