@@ -94,6 +94,11 @@ class JSONConfigTestCase(unittest.TestCase):
                          msg="has_option should return False if section \
                               exists but option is unset")
 
+        cf.set('section', 'set', 'set-normally')
+        self.assertTrue(cf.has_option('section', 'set'),
+                        msg="has option should return True if option is set \
+                             normally")
+
         cf.set(cf.default_section, 'default', 'set-in-defaults')
         self.assertTrue(cf.has_option('section', 'default'),
                         msg="has_option should return True if option set in \
