@@ -56,6 +56,11 @@ class JSONConfigTestCase(unittest.TestCase):
                          msg="get should fall back to defaults if value not \
                               set in section")
 
+        cf.set('section', 'option', 'set-normally')
+        self.assertEqual(cf.get('section', 'option'), 'set-normally',
+                         msg="get shouldn't fall back if option is set \
+                              normally")
+
     def test_get_from_vars(self):
         cf = JSONConfigParser()
         cf.add_section('section')
