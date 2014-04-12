@@ -128,5 +128,28 @@ class JSONConfigTestCase(unittest.TestCase):
         else:
             self.fail()
 
+    def test_invalid_values(self):
+        cf = JSONConfigParser()
+
+        try:
+            cf.read_string((
+                '[section]\n'
+                'unmatched = [1,2,3}\n'
+            ))
+        except Exception:
+            pass
+        else:
+            self.fail()
+
+        try:
+            cf.read_string((
+                '[section]\n'
+                'unterminated = "something\n'
+            ))
+        except Exception:
+            pass
+        else:
+            self.fail()
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(JSONConfigTestCase)
