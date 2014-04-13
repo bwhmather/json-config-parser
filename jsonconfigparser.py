@@ -14,17 +14,6 @@ __all__ = ['ParseError',
 DEFAULT_SECT = 'DEFAULT'
 _UNSET = object()
 
-_JSON_ERROR_TMPL = r"""
-    ^
-    (?P<message> .*):                           # message
-    \ line\ (?P<lineno> [0-9]+)                 # line number
-    \ column\ (?P<column> [0-9]+)               # column
-    (\ -\ line\ [0-9]+\ column\ [0-9]+\ -)?     # optional end of error
-    \ \(char\ ([0-9]+)\)                        # index in string
-    $
-    """
-_json_error_re = re.compile(_JSON_ERROR_TMPL, re.VERBOSE | re.MULTILINE)
-
 
 class ParseError(ValueError):
     def __init__(self, message, source=_UNSET, index=_UNSET, *,
@@ -66,9 +55,20 @@ class ParseError(ValueError):
 
 
 class JSONError(ParseError):
+    _JSON_ERROR_TMPL = r"""
+        ^
+        (?P<message> .*):                           # message
+        \ line\ (?P<lineno> [0-9]+)                 # line number
+        \ column\ (?P<column> [0-9]+)               # column
+        (\ -\ line\ [0-9]+\ column\ [0-9]+\ -)?     # optional end of error
+        \ \(char\ ([0-9]+)\)                        # index in string
+        $
+        """
+    _json_error_re = re.compile(_JSON_ERROR_TMPL, re.VERBOSE | re.MULTILINE)
+
     def __init__(self, error, source, index, *,
                  filename=None, section=None):
-        mo = _json_error_re.match(error.args[0])
+        mo = self._json_error_re.match(error.args[0])
         if not mo:
             raise Exception("json exception did not match expected format")
         message = mo.group('message')
