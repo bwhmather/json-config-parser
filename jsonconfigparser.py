@@ -38,7 +38,7 @@ class ParseError(ValueError):
         self.section = section
 
         if source is not _UNSET and index is not _UNSET:
-            lineno, idx, line = get_line(source, index)
+            lineno, column, line = get_line(source, index)
 
         self.lineno = lineno
         self.column = column
