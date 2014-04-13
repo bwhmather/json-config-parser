@@ -89,7 +89,7 @@ class DuplicateSectionError(ParseError):
     file, string or dictionary.
     """
     def __init__(self, section, **kwargs):
-        msg = 'Section %s already declared' % repr(section)
+        msg = 'Duplicate section %s' % repr(section)
         ParseError.__init__(self, msg, **kwargs)
 
 
@@ -371,7 +371,13 @@ class JSONConfigParser(MutableMapping):
 
                 # check that section has not occured in this file before
                 if section in config:
-                    raise DuplicateSectionError(section)
+                    lineno, column, line = get_line(string, idx)
+                    raise DuplicateSectionError(
+                        section,
+                        filename=fpname,
+                        lineno=lineno, column=column,
+                        line=line
+                    )
 
                 # find or create the section
                 if section not in config:
@@ -396,12 +402,21 @@ class JSONConfigParser(MutableMapping):
                     )
 
                 if section is None:
-                    raise MissingSectionHeaderError()
+                    lineno, column, line = get_line(string, idx)
+                    raise MissingSectionHeaderError(
+                        filename=fpname, section=section,
+                        lineno=lineno, column=column,
+                        line=line
+                    )
 
                 option = mo.group('key')
                 if option in config[section]:
-                    raise DuplicateOptionError(section, option,
-                                               fpname, lineno)
+                    lineno, column, line = get_line(string, idx)
+                    raise DuplicateOptionError(
+                        filename=fpname, section=section,
+                        lineno=lineno, column=column,
+                        line=line
+                    )
 
                 idx = mo.end()
 
