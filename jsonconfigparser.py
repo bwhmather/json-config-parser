@@ -34,8 +34,6 @@ class ParseError(ValueError):
                  filename=None, section=None,
                  lineno=None, column=None,
                  line=None):
-        super(ParseError, self).__init__(self)
-
         self.message = message
         self.filename = filename
         self.section = section
@@ -46,6 +44,8 @@ class ParseError(ValueError):
         self.lineno = lineno
         self.column = column
         self.line = line
+
+        super(ParseError, self).__init__(str(self))
 
     def __str__(self):
         location = []
