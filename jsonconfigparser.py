@@ -15,6 +15,20 @@ DEFAULT_SECT = 'DEFAULT'
 _UNSET = object()
 
 
+def get_line(string, idx):
+    """ Given a string and the index of a character in the string, returns the
+    number and contents of the line containing the referenced character and the
+    index of the character on that line.
+
+    Spectacularly inefficient but only called in exception handling
+    """
+    for lineno, line in enumerate(string.splitlines(True)):
+        if idx < len(line):
+            return lineno + 1, idx, line
+        idx -= len(line)
+    raise IndexError()
+
+
 class ParseError(ValueError):
     def __init__(self, message, source=_UNSET, index=_UNSET, *,
                  filename=None, section=None,
@@ -135,20 +149,6 @@ class NoSectionError(KeyError):
 
 class NoOptionError(KeyError):
     pass
-
-
-def get_line(string, idx):
-    """ Given a string and the index of a character in the string, returns the
-    number and contents of the line containing the referenced character and the
-    index of the character on that line.
-
-    Spectacularly inefficient but only called in exception handling
-    """
-    for lineno, line in enumerate(string.splitlines(True)):
-        if idx < len(line):
-            return lineno + 1, idx, line
-        idx -= len(line)
-    raise IndexError()
 
 
 class JSONConfigParser(MutableMapping):
