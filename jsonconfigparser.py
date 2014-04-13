@@ -37,15 +37,12 @@ class ParseError(ValueError):
         self.filename = filename
         self.section = section
 
+        if source is not _UNSET and index is not _UNSET:
+            lineno, idx, line = get_line(source, index)
+
         self.lineno = lineno
         self.column = column
         self.line = line
-
-        if source is not _UNSET and index is not _UNSET:
-            lineno, idx, line = get_line(source, index)
-            self.lineno = self.lineno or lineno
-            self.column = self.column or column
-            self.line = self.line or line
 
     def __str__(self):
         location = []
