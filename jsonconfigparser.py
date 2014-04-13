@@ -27,7 +27,7 @@ _json_error_re = re.compile(_JSON_ERROR_TMPL, re.VERBOSE | re.MULTILINE)
 
 
 class ParseError(ValueError):
-    def __init__(self, message, *,
+    def __init__(self, message, source=_UNSET, index=_UNSET, *,
                  filename=None, section=None,
                  lineno=None, column=None,
                  line=None):
@@ -36,9 +36,16 @@ class ParseError(ValueError):
         self.message = message
         self.filename = filename
         self.section = section
+
         self.lineno = lineno
         self.column = column
         self.line = line
+
+        if source is not _UNSET and index is not _UNSET:
+            lineno, idx, line = get_line(source, index)
+            self.lineno = self.lineno or lineno
+            self.column = self.column or column
+            self.line = self.line or line
 
     def __str__(self):
         location = []
@@ -360,23 +367,17 @@ class JSONConfigParser(MutableMapping):
             if string[idx] == '[':
                 mo = self._header_re.match(string, idx)
                 if not mo:
-                    lineno, column, line = get_line(string, idx)
                     raise ParseError(
                         'could not parse section header',
-                        filename=fpname,
-                        lineno=lineno, column=column,
-                        line=line
+                        string, idx, filename=fpname, section=section
                     )
                 section = mo.group('section')
 
                 # check that section has not occured in this file before
                 if section in config:
-                    lineno, column, line = get_line(string, idx)
                     raise DuplicateSectionError(
                         section,
-                        filename=fpname,
-                        lineno=lineno, column=column,
-                        line=line
+                        string, idx, filename=fpname, section=section
                     )
 
                 # find or create the section
@@ -393,29 +394,22 @@ class JSONConfigParser(MutableMapping):
                 # read option
                 mo = self._key_re.match(string, idx)
                 if not mo:
-                    lineno, column, line = get_line(string, idx)
                     raise ParseError(
                         "expected section, option, comment or empty line",
-                        filename=fpname, section=section,
-                        lineno=lineno, column=column,
-                        line=line
+                        string, idx, filename=fpname, section=section
                     )
 
                 if section is None:
                     lineno, column, line = get_line(string, idx)
                     raise MissingSectionHeaderError(
-                        filename=fpname, section=section,
-                        lineno=lineno, column=column,
-                        line=line
+                        string, idx, filename=fpname, section=section
                     )
 
                 option = mo.group('key')
                 if option in config[section]:
                     lineno, column, line = get_line(string, idx)
                     raise DuplicateOptionError(
-                        filename=fpname, section=section,
-                        lineno=lineno, column=column,
-                        line=line
+                        string, idx, filename=fpname, section=section
                     )
 
                 idx = mo.end()
@@ -438,12 +432,9 @@ class JSONConfigParser(MutableMapping):
                 # consume remaining comments and whitespace
                 mo = self._eol_re.match(string, idx)
                 if not mo:
-                    lineno, column, line = get_line(string, idx)
                     raise ParseError(
                         "unexpected symbol or whitespace",
-                        filename=fpname, section=section,
-                        lineno=lineno, column=column,
-                        line=line
+                        string, idx, filename=fpname
                     )
                 idx = mo.end()
         self.read_dict(config)
