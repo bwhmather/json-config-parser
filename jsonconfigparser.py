@@ -407,7 +407,7 @@ class JSONConfigParser(MutableMapping):
 
                 if section is None:
                     raise MissingSectionHeaderError(
-                        string, idx, filename=fpname, section=section
+                        string, idx, filename=fpname
                     )
 
                 option = mo.group('key')
