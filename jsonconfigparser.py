@@ -310,10 +310,11 @@ class JSONConfigParser(MutableMapping):
         else:
             raise NoSectionError(section)
 
-        existed = option in section_dict
-        if existed:
-            del self._sections[section]
-        return existed
+        try:
+            section_dict.pop(option)
+        except KeyError:
+            return False
+        return True
 
     def read(self, filenames, encoding=None, *, skip=False):
         if isinstance(filenames, str):
