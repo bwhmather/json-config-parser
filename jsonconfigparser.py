@@ -412,7 +412,6 @@ class JSONConfigParser(MutableMapping):
 
                 option = mo.group('key')
                 if option in config[section]:
-                    lineno, column, line = get_line(string, idx)
                     raise DuplicateOptionError(
                         string, idx, filename=fpname, section=section
                     )
