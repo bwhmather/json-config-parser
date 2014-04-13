@@ -26,7 +26,7 @@ _JSON_ERROR_TMPL = r"""
 _json_error_re = re.compile(_JSON_ERROR_TMPL, re.VERBOSE | re.MULTILINE)
 
 
-class ParseError(BaseException):
+class ParseError(ValueError):
     def __init__(self, message, *,
                  filename=None, section=None,
                  lineno=None, column=None,
