@@ -68,6 +68,26 @@ class ParseError(ValueError):
         return output
 
 
+class JSONError(ParseError):
+    def __init__(self, error, source, index, *,
+                 filename=None, section=None):
+        mo = _json_error_re.match(error.args[0])
+        if not mo:
+            raise Exception("TODO")
+        message = mo.group('message')
+        lineno = int(mo.group('lineno'))
+        column = int(mo.group('column'))
+
+        line = source.splitlines()[lineno-1]
+
+        super(JSONError, self).__init__(
+            message,
+            filename=filename, section=section,
+            lineno=lineno, column=column,
+            line=line
+        )
+
+
 class MissingSectionHeaderError(ParseError):
     """Raised if an option occurs before the first header
     """
@@ -118,17 +138,6 @@ class NoSectionError(KeyError):
 
 class NoOptionError(KeyError):
     pass
-
-
-def parse_json_error(json_error):
-    mo = _json_error_re.match(json_error)
-    if not mo:
-        raise Exception("TODO")
-    return (
-        mo.group('message'),
-        int(mo.group('lineno')),
-        int(mo.group('column'))
-    )
 
 
 def get_line(string, idx):
@@ -418,13 +427,9 @@ class JSONConfigParser(MutableMapping):
                 try:
                     value, idx = self._json_decoder.raw_decode(string, idx)
                 except ValueError as e:
-                    message, lineno, column = parse_json_error(e.args[0])
-                    line = string.splitlines()[lineno-1]
-                    raise ParseError(
-                        message,
-                        filename=fpname, section=section,
-                        lineno=lineno, column=column,
-                        line=line
+                    raise JSONError(
+                        e, string, idx,
+                        filename=fpname, section=section
                     )
 
                 config[section][option] = value
