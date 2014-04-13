@@ -5,7 +5,7 @@ import itertools
 import re
 import json
 
-__all__ = ['ParseError',
+__all__ = ['ParseError', 'JSONError', 'MissingSectionHeaderError',
            'InvalidSectionNameError', 'InvalidOptionNameError',
            'NoSectionError', 'NoOptionError',
            'DuplicateSectionError', 'DuplicateOptionError',
