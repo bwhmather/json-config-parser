@@ -114,6 +114,21 @@ class JSONConfigTestCase(unittest.TestCase):
                         msg="has_option should return True if option set in \
                              defaults")
 
+    def test_remove_option(self):
+        cf = JSONConfigParser()
+
+        cf.add_section('section')
+        cf.set('section', 'normal', 'set-normally')
+        cf.set(cf.default_section, 'default', 'set-in-defaults')
+
+        # can remove normal options
+        self.assertTrue(cf.remove_option('section', 'normal'))
+        self.assertFalse(cf.has_option('section', 'normal'))
+
+        # can't remove defaults accidentally (maybe there should be shadowing)
+        self.assertFalse(cf.remove_option('section', 'default'))
+        self.assertEqual(cf.get('section', 'default'), 'set-in-defaults')
+
     def test_invalid_section(self):
         cf = JSONConfigParser()
 
