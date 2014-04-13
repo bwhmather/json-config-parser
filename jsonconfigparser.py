@@ -88,21 +88,21 @@ class JSONError(ParseError):
 class MissingSectionHeaderError(ParseError):
     """Raised if an option occurs before the first header
     """
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         msg = 'No section header before first option.'
-        ParseError.__init__(self, msg, **kwargs)
+        ParseError.__init__(self, msg, *args, **kwargs)
 
 
 class InvalidSectionNameError(ParseError):
-    def __init__(self, section, **kwargs):
+    def __init__(self, section, *args, **kwargs):
         msg = 'Invalid section name: %s' % repr(section)
-        ParseError.__init__(self, msg, **kwargs)
+        ParseError.__init__(self, msg, *args, **kwargs)
 
 
 class InvalidOptionNameError(ParseError):
-    def __init__(self, option, **kwargs):
+    def __init__(self, option, *args, **kwargs):
         msg = 'Invalid option name: %s' % repr(option)
-        ParseError.__init__(self, msg, **kwargs)
+        ParseError.__init__(self, msg, *args, **kwargs)
 
 
 class DuplicateSectionError(ParseError):
@@ -112,9 +112,9 @@ class DuplicateSectionError(ParseError):
     using the API or when a section is found more than once in a single input
     file, string or dictionary.
     """
-    def __init__(self, section, **kwargs):
+    def __init__(self, section, *args, **kwargs):
         msg = 'Duplicate section %s' % repr(section)
-        ParseError.__init__(self, msg, **kwargs)
+        ParseError.__init__(self, msg, *args, **kwargs)
 
 
 class DuplicateOptionError(ParseError):
@@ -124,9 +124,9 @@ class DuplicateOptionError(ParseError):
     more than once in a single file, string or dictionary.
     """
 
-    def __init__(self, option, **kwargs):
+    def __init__(self, option, *args, **kwargs):
         msg = 'Duplicate definition of option: %s' % repr(option)
-        ParseError.__init__(self, msg, **kwargs)
+        ParseError.__init__(self, msg, *args, **kwargs)
 
 
 class NoSectionError(KeyError):
@@ -406,7 +406,6 @@ class JSONConfigParser(MutableMapping):
                     )
 
                 if section is None:
-                    lineno, column, line = get_line(string, idx)
                     raise MissingSectionHeaderError(
                         string, idx, filename=fpname, section=section
                     )
