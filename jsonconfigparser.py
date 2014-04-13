@@ -70,7 +70,7 @@ class JSONError(ParseError):
                  filename=None, section=None):
         mo = _json_error_re.match(error.args[0])
         if not mo:
-            raise Exception("TODO")
+            raise Exception("json exception did not match expected format")
         message = mo.group('message')
         lineno = int(mo.group('lineno'))
         column = int(mo.group('column'))
