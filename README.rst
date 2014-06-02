@@ -17,7 +17,7 @@ If you need legacy support then there are a couple of forks which look like they
 Installation
 ------------
 
-Available on pypi as `json-config-parser <pypi_>`
+Available on pypi as `json-config-parser <pypi_>`_
 
 To install run
 
@@ -26,7 +26,7 @@ To install run
     pip install json-config-parser
 
 
-Alternatively grab the code from `github <project_page_>` and run:
+Alternatively grab the code from `github <project_page_>`_ and run:
 
 .. code:: sh
 
