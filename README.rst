@@ -10,6 +10,9 @@ A straightforward and unambiguous config file parser.
 
 This package was originally based on the configparser module that comes in the standard python distribution but has been almost entirely rewritten.
 
+The main branch won't support python 2 as it is missing keyword only arguments and ``ChainMap`` is not in the standard library.
+If you need legacy support then there are a couple of forks which look like they do the job.
+
 
 Installation
 ------------
