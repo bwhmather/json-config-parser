@@ -22,6 +22,7 @@ Available on pypi as `json-config-parser <pypi_>`
 To install run
 
 .. code:: sh
+
     pip install json-config-parser
 
 
@@ -45,6 +46,7 @@ Usage
 -----
 
 .. code:: python
+
     cfg = JSONConfigParser()
 
     cfg.read_string("""
