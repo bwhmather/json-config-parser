@@ -53,7 +53,7 @@ Usage
             3]
     nested = {"list": [1,2,3]}
     true = true
-    nil = nil
+    none = null
     
     [DEFAULT]
     # settings in the default section are inherited
