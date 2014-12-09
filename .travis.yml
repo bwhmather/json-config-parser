@@ -12,3 +12,9 @@ script:
   - python setup.py test;
   - pep8 .
   - pyflakes .
+
+deploy:
+  provider: pypi
+  user: "bwhmather-travis"
+  password:
+    secure: gBVxW0q1r3OcmSfJU5m4hIbuWxhrxlJKBKhbnhCRZQrskUUbDKzJyS++Xg2EL51t0ZWpIJDFdTVJPL7uWcOJiuDulE8/cD8dnUVf/FKc4mLyAHX5FV3zyzki9iWZLmxoxTP+0XZthTK1kuU/VzNn39LXRqfOvHLllA9KtLb5t5Y=
