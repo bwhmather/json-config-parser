@@ -84,7 +84,7 @@ class JSONError(ParseError):
                  filename=None, section=None):
         mo = self._json_error_re.match(error.args[0])
         if not mo:
-            raise Exception("json exception did not match expected format")
+            raise Exception("JSON exception did not match expected format")
         message = mo.group('message')
         lineno = int(mo.group('lineno'))
         column = int(mo.group('column'))
@@ -374,7 +374,7 @@ class JSONConfigParser(MutableMapping):
                 mo = self._header_re.match(string, idx)
                 if not mo:
                     raise ParseError(
-                        'could not parse section header',
+                        'Could not parse section header',
                         string, idx, filename=fpname, section=section
                     )
                 section = mo.group('section')
@@ -401,7 +401,7 @@ class JSONConfigParser(MutableMapping):
                 mo = self._key_re.match(string, idx)
                 if not mo:
                     raise ParseError(
-                        "expected section, option, comment or empty line",
+                        "Expected section, option, comment or empty line",
                         string, idx, filename=fpname, section=section
                     )
 
@@ -433,7 +433,7 @@ class JSONConfigParser(MutableMapping):
                 mo = self._eol_re.match(string, idx)
                 if not mo:
                     raise ParseError(
-                        "unexpected symbol or whitespace",
+                        "Unexpected symbol or whitespace",
                         string, idx, filename=fpname
                     )
                 idx = mo.end()

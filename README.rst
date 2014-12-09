@@ -1,4 +1,4 @@
-.. image:: https://travis-ci.org/bwhmather/json-config-parser.png?branch=master
+.. image:: https://travis-ci.org/bwhmather/json-config-parser.png?branch=develop
     :target: http://travis-ci.org/bwhmather/json-config-parser
     :alt: Build Status
 
@@ -10,19 +10,23 @@ A straightforward and unambiguous config file parser.
 
 This package was originally based on the configparser module that comes in the standard python distribution but has been almost entirely rewritten.
 
+The main branch won't support python 2 as it is missing keyword only arguments and ``ChainMap`` is not in the standard library.
+If you need legacy support then there are a couple of forks which look like they do the job.
+
 
 Installation
 ------------
 
-Available on pypi as `json-config-parser <pypi_>`
+Available on pypi as `json-config-parser <pypi_>`_
 
 To install run
 
 .. code:: sh
+
     pip install json-config-parser
 
 
-Alternatively grab the code from `github <project_page_>` and run:
+Alternatively grab the code from `github <project_page_>`_ and run:
 
 .. code:: sh
 
@@ -42,6 +46,7 @@ Usage
 -----
 
 .. code:: python
+
     cfg = JSONConfigParser()
 
     cfg.read_string("""
@@ -53,7 +58,7 @@ Usage
             3]
     nested = {"list": [1,2,3]}
     true = true
-    nil = nil
+    none = null
     
     [DEFAULT]
     # settings in the default section are inherited
