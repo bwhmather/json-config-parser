@@ -1,7 +1,7 @@
 Json Config Parser
 ==================
 
-|build-status|
+|build-status| |coverage|
 
 A straightforward and unambiguous config file parser.
 
@@ -83,6 +83,9 @@ Pull requests are also welcome.
 .. |build-status| image:: https://travis-ci.org/bwhmather/json-config-parser.png?branch=develop
     :target: http://travis-ci.org/bwhmather/json-config-parser
     :alt: Build Status
+.. |coverage| image:: https://coveralls.io/repos/bwhmather/json-config-parser/badge.png?branch=develop
+    :target: https://coveralls.io/r/bwhmather/json-config-parser?branch=develop
+    :alt: Coverage
 .. _pypi: https://pypi.python.org/pypi/json-config-parser/
 .. _project_page: https://github.com/bwhmather/json-config-parser
 .. _bugtracker: https://github.com/bwhmather/json-config-parser/issues
