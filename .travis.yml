@@ -6,13 +6,17 @@ python:
 
 install:
   - "pip install -e ."
+  - "pip install coveralls"
   - "pip install pyflakes"
   - "pip install pep8"
 
 script:
-  - "python setup.py test"
+  - "coverage run --source=jsonconfigparser setup.py test"
   - "pep8 ."
   - "pyflakes ."
+
+after_success:
+  - "coveralls"
 
 deploy:
   provider: pypi
