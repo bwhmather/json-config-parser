@@ -1,10 +1,7 @@
-.. image:: https://travis-ci.org/bwhmather/json-config-parser.png?branch=develop
-    :target: http://travis-ci.org/bwhmather/json-config-parser
-    :alt: Build Status
-
-
 Json Config Parser
 ==================
+
+|build-status|
 
 A straightforward and unambiguous config file parser.
 
@@ -83,6 +80,9 @@ Please report any problems on the `bugtracker`_ and I will do my best to fix the
 Pull requests are also welcome.
 
 
+.. |build-status| image:: https://travis-ci.org/bwhmather/json-config-parser.png?branch=develop
+    :target: http://travis-ci.org/bwhmather/json-config-parser
+    :alt: Build Status
 .. _pypi: https://pypi.python.org/pypi/json-config-parser/
 .. _project_page: https://github.com/bwhmather/json-config-parser
 .. _bugtracker: https://github.com/bwhmather/json-config-parser/issues
