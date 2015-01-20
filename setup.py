@@ -1,19 +1,11 @@
-"""
-JSON Config Parser
-==================
-
-A straightforward and unambiguous config file parser.
-Parses ini style files with json keys.
-"""
 from setuptools import setup
 
 setup(
     name='json-config-parser',
-    version='0.1.1',
+    version='0.1.2',
     author='Ben Mather',
     author_email='bwhmather@bwhmather.com',
     description='A straightforward and unambiguous config file parser.',
-    long_description=__doc__,
     url='https://github.com/bwhmather/json-config-parser/',
     license='BSD',
     classifiers=[

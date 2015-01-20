@@ -50,7 +50,7 @@ class JSONConfigTestCase(unittest.TestCase):
             cf.get('section', 'option')
         except NoSectionError:
             pass
-        else:
+        else:  # pragma: no cover
             self.fail("Only fall back to defaults if section exists")
 
         cf.add_section('section')
@@ -90,7 +90,7 @@ class JSONConfigTestCase(unittest.TestCase):
             cf.get('nosection', 'unset', 'fallback')
         except NoSectionError:
             pass
-        else:
+        else:  # pragma: no cover
             self.fail()
 
     def test_has_option(self):
@@ -143,7 +143,7 @@ class JSONConfigTestCase(unittest.TestCase):
 
             # check that nothing was added
             self.assertEqual(sum(1 for _ in cf.sections()), 0)
-        else:
+        else:  # pragma: no cover
             self.fail()
 
         try:
@@ -155,7 +155,7 @@ class JSONConfigTestCase(unittest.TestCase):
 
             # check that nothing was added
             self.assertEqual(sum(1 for _ in cf.sections()), 0)
-        else:
+        else:  # pragma: no cover
             self.fail()
 
     def test_invalid_values(self):
@@ -171,7 +171,7 @@ class JSONConfigTestCase(unittest.TestCase):
 
             # check that nothing was added
             self.assertEqual(sum(1 for _ in cf.sections()), 0)
-        else:
+        else:  # pragma: no cover
             self.fail()
 
         try:
@@ -184,7 +184,7 @@ class JSONConfigTestCase(unittest.TestCase):
 
             # check that nothing was added
             self.assertEqual(sum(1 for _ in cf.sections()), 0)
-        else:
+        else:  # pragma: no cover
             self.fail()
 
 
