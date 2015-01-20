@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='json-config-parser',
-    version='0.1.1',
+    version='0.1.2',
     author='Ben Mather',
     author_email='bwhmather@bwhmather.com',
     description='A straightforward and unambiguous config file parser.',
